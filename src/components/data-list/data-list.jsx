@@ -1,5 +1,5 @@
 import React from 'react';
-// import { bindActionCreators } from 'redux';
+import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
 
 import { addItem, removeItem, editItem } from '../../actions';
@@ -46,10 +46,15 @@ const mapStateToProps = ({ tree: { data, children, id }}) => {
   return { data, children, id };
 };
 
-const mapDispatchToProps = {
+// const mapDispatchToProps = {
+//   addItem,
+//   removeItem,
+//   editItem
+// };
+const mapDispatchToProps = dispatch => bindActionCreators({
   addItem,
   removeItem,
   editItem
-};
+}, dispatch);
 
 export default connect(mapStateToProps, mapDispatchToProps)(DataList);
