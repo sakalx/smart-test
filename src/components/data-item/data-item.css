@@ -1,0 +1,9 @@
+.item {
+  display: inline-flex;
+  border: 1px solid black;
+}
+
+.content {
+  min-width: 100px;
+  min-height: 20px;
+}
