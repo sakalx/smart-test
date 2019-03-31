@@ -1,9 +1,9 @@
+import {combineReducers} from 'redux';
+
 import tree from './tree';
 
-const reducer = (state, action) => {
-  return {
-    tree: tree(state, action)
-  };
-};
+const appReducer = combineReducers({
+  tree,
+});
 
-export default reducer;
+export default appReducer;

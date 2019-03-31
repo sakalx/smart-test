@@ -1,60 +1,43 @@
 import React from 'react';
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
 
-import { addItem, removeItem, editItem } from '../../actions';
-// import { compose } from '../../utils';
+import {connect} from 'react-redux';
 
 import DataItem from '../data-item';
 
 import './data-list.css';
 
-const DataList = (a) => {
+const DataList = ({tree}) => {
 
-  const func = (a, add, edit, remove) => {
-    console.log(a)
-    if (a.children) {
+  const renderTree = (tree) => {
+    if (tree.children.length) {
       return (
-          <li key={a.id}>
-            <DataItem data={a.data} id={a.id} addItem={add} editItem={edit} removeItem={remove} />
+          <li key={tree.id}>
+            <DataItem data={tree.data} id={tree.id}/>
             <ul>
-              {
-                a.children.map((el) => {
-                  return func(el, a.addItem, a.editItem, a.removeItem);
-                })
-              }
+              {tree.children.map((childrenTree) =>
+                  renderTree(childrenTree),
+              )}
             </ul>
           </li>
-      )
+      );
     } else {
       return (
-        <li key={a.id}>
-          <DataItem data={a.data} id={a.id} addItem={add} editItem={edit} removeItem={remove} />
-        </li>
-      )
+          <li key={tree.id}>
+            <DataItem data={tree.data} id={tree.id}/>
+          </li>
+      );
     }
-  }
+  };
 
   return (
-    <ul className="list">
-      {func(a, a.addItem, a.editItem, a.removeItem)}
-    </ul>
+      <ul className="list">
+        {renderTree(tree)}
+      </ul>
   );
 };
 
-const mapStateToProps = ({ tree: { data, children, id }}) => {
-  return { data, children, id };
-};
+const mapStateToProps = ({tree}) => ({
+  tree,
+});
 
-// const mapDispatchToProps = {
-//   addItem,
-//   removeItem,
-//   editItem
-// };
-const mapDispatchToProps = dispatch => bindActionCreators({
-  addItem,
-  removeItem,
-  editItem
-}, dispatch);
-
-export default connect(mapStateToProps, mapDispatchToProps)(DataList);
+export default connect(mapStateToProps, null)(DataList);

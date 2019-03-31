@@ -1,78 +1,67 @@
-const tree = (state, action) => {
+import {uuidv4} from '../utils';
 
-  console.log('obnovlenie');
-
-  if (state === undefined) {
-    return {
-      data: 0,
-      id: '0',
-      children: [{
-        data: 2,
-        id: '1-0',
-        children: [{
+const initState = {
+  data: 0,
+  id: uuidv4(),
+  children: [
+    {
+      data: 2,
+      id: uuidv4(),
+      children: [
+        {
           data: 3,
-          children: null,
-          id: '2-0'
+          children: [],
+          id: uuidv4(),
         },
         {
           data: 4,
-          children: null,
-          id: '2-1'
+          children: [],
+          id: uuidv4(),
         }],
-      }],
+    }],
+};
+
+const tree = (state = initState, {type, payload}) => {
+
+  const addItem = (itemId) => {
+    // [NOTE] Deep Copying Objects for keep it Immutable!
+    // [TODO] Better way use lodash https://lodash.com/docs#cloneDeep
+    // [FIXME] Crutch!
+    const tree = JSON.parse(JSON.stringify(state));
+
+    const newNode = {
+      children: [],
+      data: 'some data',
+      id: uuidv4(),
     };
-  }
 
-  const findItem = (obj, id) => {
-    console.log('suda', obj, id);
-    if (obj.id === id) {
-      return obj;
-    } else if (obj.children) {
-      return obj.children.find((el) => {
-        return findItem(el, id);
+    // [NOTE] IIFE Recursive travers tree for add new node
+    void function traverse(node) {
+      if (node.id === itemId) {
+        node.children.push(newNode);
+        return;
+      }
+      node.children.forEach((node) => {
+        traverse(node);
       });
-    }
+
+    }(tree);
+
+    return tree;
   };
 
-  const addItem = (state, itemId) => {
-    console.log('suda 1', state.tree);
-    const newState = Object.assign(state.tree);
-    let item = findItem(newState, itemId);
-    console.log('tut', item);
-    if (!item.children) {
-      item.children = []
-    }
-    item.children.push({
-      data: null,
-      id: `${itemId}${item.children.length}`,
-      children: null
-    })
-    console.log('itogi', newState);
-    return newState;
-  };
-
-  console.log(action)
-  switch (action.type) {
+  switch (type) {
     case 'ADD_CHILDREN':
-      console.log('suda 2');
-      return addItem(state, action.payload);
+      return addItem(payload);
 
     case 'REMOVE':
-      return {
-        data: null,
-        children: null,
-        parent: null
-      };
+      return state;
 
     case 'EDIT':
-      return {
-        data: null,
-        children: null,
-        parent: null
-      };
+      return state;
 
     default:
-      return state.tree;
+      return state;
   }
 };
 
